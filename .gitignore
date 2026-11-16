@@ -1,0 +1,21 @@
+# deps / build
+node_modules
+dist
+*.log
+
+# 비밀값: .env는 절대 커밋하지 않는다 (키 이름은 .env.example)
+.env
+.env.*
+!.env.example
+
+# 도구·로컬 상태
+.vercel
+.omc
+.gstack
+.claude/settings.local.json
+.DS_Store
+
+# Python (scanner/)
+.venv
+__pycache__
+*.pyc

@@ -1,0 +1,23 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ProductThumb">
+<g clip-path="url(#clip0_0_38)">
+<path d="M2 18C2 9.16344 9.16344 2 18 2H50C58.8366 2 66 9.16344 66 18V50C66 58.8366 58.8366 66 50 66H18C9.16344 66 2 58.8366 2 50V18Z" fill="url(#paint0_linear_0_38)"/>
+<circle id="glow" opacity="0.21" cx="62" cy="26" r="84" fill="white"/>
+<circle id="icon disc" opacity="0.35" cx="34" cy="34" r="38" fill="white"/>
+<g id="icon/knit">
+<path id="Vector" d="M28.5 17.5L17.5 24.8333L21.1667 32.1667L24.8333 30.3333V48.6667H43.1667V30.3333L46.8333 32.1667L50.5 24.8333L39.5 17.5C38.7667 19.8833 36.5667 21.1667 34 21.1667C31.4333 21.1667 29.2333 19.8833 28.5 17.5Z" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" stroke="#6B7280"/>
+<path id="Vector_2" d="M24.8333 43.1667H43.1667" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" stroke="#6B7280"/>
+</g>
+</g>
+<path d="M50 1C59.3888 1 67 8.61116 67 18V50C67 59.3888 59.3888 67 50 67H18C8.61116 67 1 59.3888 1 50V18C1 8.61116 8.61116 1 18 1H50Z" stroke="white" stroke-width="2"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_38" x1="-14" y1="18" x2="31.7143" y2="63.7143" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EADFCB"/>
+<stop offset="1" stop-color="#CDB899"/>
+</linearGradient>
+<clipPath id="clip0_0_38">
+<path d="M2 18C2 9.16344 9.16344 2 18 2H50C58.8366 2 66 9.16344 66 18V50C66 58.8366 58.8366 66 50 66H18C9.16344 66 2 58.8366 2 50V18Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>

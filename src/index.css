@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* Figma `POSTIC` 변수 컬렉션과 1:1 대응 */
+@theme {
+  --color-brand: #1488ff;
+  --color-brand-soft: #e3efff;
+  --color-violet: #7b5cff;
+  --color-bg: #f2f3f6;
+  --color-surface: #ffffff;
+  --color-ink: #111111; /* text-primary */
+  --color-sub: #6b7280; /* text-secondary */
+  --color-faint: #9ca3af; /* text-tertiary */
+  --color-line: #e5e7eb; /* border */
+  --color-ok: #22c55e;
+  --color-ok-soft: #e7f8ee;
+  --color-ok-text: #15803d;
+  --color-caution: #f59e0b;
+  --color-caution-soft: #fef3c7;
+  --color-caution-text: #b45309;
+  --color-critical: #ef4444;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+}
+
+/* Figma 텍스트 스타일 */
+@utility t-display {
+  font-size: 72px;
+  line-height: 80px;
+  font-weight: 900;
+  letter-spacing: -1.44px;
+}
+@utility t-title {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 800;
+  letter-spacing: -0.28px;
+}
+@utility t-heading {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+}
+@utility t-section {
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -0.051px;
+}
+@utility t-body {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+}
+@utility t-body-strong {
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 600;
+}
+@utility t-meta {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+}
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+.pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-up { animation: sheet-up .25s ease-out; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin .8s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-dot, .sheet-up, .spin { animation: none; }
+}

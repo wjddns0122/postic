@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="ProductThumb">
+<g clip-path="url(#clip0_0_268)">
+<path d="M0 16C0 7.16344 7.16345 0 16 0H104C112.837 0 120 7.16345 120 16V104C120 112.837 112.837 120 104 120H16C7.16344 120 0 112.837 0 104V16Z" fill="url(#paint0_linear_0_268)"/>
+<circle id="glow" opacity="0.03" cx="60" cy="24" r="84" fill="#111111"/>
+<circle id="icon disc" opacity="0.05" cx="60" cy="60" r="38" fill="#111111"/>
+<g id="icon/oxford">
+<path id="Vector" d="M53.5833 43.5L43.5 49.9167L47.1667 56.3333L50.8333 54.5V74.6667H69.1667V54.5L72.8333 56.3333L76.5 49.9167L66.4167 43.5L60 52.6667L53.5833 43.5Z" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" stroke="#9CA3AF"/>
+<path id="Vector_2" d="M60 52.6667V74.6667" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" stroke="#9CA3AF"/>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_268" x1="-30" y1="30" x2="55.7143" y2="115.714" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FAFAF8"/>
+<stop offset="1" stop-color="#DEDDD7"/>
+</linearGradient>
+<clipPath id="clip0_0_268">
+<path d="M0 16C0 7.16344 7.16345 0 16 0H104C112.837 0 120 7.16345 120 16V104C120 112.837 112.837 120 104 120H16C7.16344 120 0 112.837 0 104V16Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>
