@@ -176,10 +176,44 @@ export type Database = {
           },
         ]
       }
+      order_notes: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          id: number
+          note: string
+          order_id: string
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          id?: never
+          note: string
+          order_id: string
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          id?: never
+          note?: string
+          order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_notes_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           amount: number
-          close_note: string | null
           closed_at: string | null
           created_at: string
           device_id: string | null
@@ -197,7 +231,6 @@ export type Database = {
         }
         Insert: {
           amount?: number
-          close_note?: string | null
           closed_at?: string | null
           created_at?: string
           device_id?: string | null
@@ -215,7 +248,6 @@ export type Database = {
         }
         Update: {
           amount?: number
-          close_note?: string | null
           closed_at?: string | null
           created_at?: string
           device_id?: string | null
@@ -654,7 +686,6 @@ export type Database = {
         Args: { p_action: string; p_note?: string; p_order: string }
         Returns: {
           amount: number
-          close_note: string | null
           closed_at: string | null
           created_at: string
           device_id: string | null
@@ -855,7 +886,6 @@ export type Database = {
         }
         Returns: {
           amount: number
-          close_note: string | null
           closed_at: string | null
           created_at: string
           device_id: string | null
@@ -883,7 +913,6 @@ export type Database = {
         Args: { p_order: string; p_pin: string; p_status: string }
         Returns: {
           amount: number
-          close_note: string | null
           closed_at: string | null
           created_at: string
           device_id: string | null

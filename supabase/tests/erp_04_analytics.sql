@@ -72,6 +72,31 @@ begin
   assert r.seen_minutes = 1 and r.away_minutes = 4 and r.away_count = 1, format('threshold -52: %s', row_to_json(r));
   assert r.last_seen = '2026-01-05 10:04:00+09', format('last_seen %s', r.last_seen);
 
+  -- 게이트가 잠깐 끊겨도(10:02 없음) 이어진 자리 비움은 1회로 센다
+  perform pg_temp.as_admin();
+  insert into public.products (id, name, price, hanger, zone, sizes, status, major, minor)
+  values ('ZT-GAP', '테스트 갭', 1000, 'HG-09', 'Z-09', '{}', 'active', 9, 904);
+  insert into public.gateway_minutes (gateway, minute, posts)
+  select 'G1-TEST', g, 60 from unnest(array[
+    '2026-01-06 10:00:00+09', '2026-01-06 10:01:00+09', '2026-01-06 10:03:00+09', '2026-01-06 10:04:00+09'
+  ]::timestamptz[]) g;
+  perform pg_temp.as_user(m);
+  select * into r from public.erp_tag_activity('2026-01-06', '2026-01-06', -100) where product_id = 'ZT-GAP';
+  assert r.gateway_minutes = 4 and r.away_minutes = 4 and r.away_count = 1, format('gateway gap must not split a run: %s', row_to_json(r));
+
+  -- 분 단위 기록이 실패해도 수신은 성공하고 오류만 남는다 (일부러 실패를 주입)
+  perform pg_temp.as_admin();
+  alter table public.tag_minutes add constraint erp_test_fail check (samples < 0) not valid;
+  alter table public.gateway_minutes add constraint erp_test_fail check (posts < 0) not valid;
+  insert into public.tag_presence (key, major, minor, rssi, last_seen, gateway, simulated)
+  values ('9-905', 9, 905, -50, '2026-01-05 11:00:00+09', 'G1-TEST', false);
+  perform public.log_raw('{"gw":"ac233fc2f00d"}');
+  assert exists (select 1 from public.tag_presence where key = '9-905'), 'ingest upsert still succeeds';
+  assert exists (select 1 from public.audit_log where action = 'error' and entity = 'presence_minute' and at >= now()), 'tag failure logged';
+  assert exists (select 1 from public.audit_log where action = 'error' and entity = 'gateway_minute' and at >= now()), 'gateway failure logged';
+  alter table public.tag_minutes drop constraint erp_test_fail;
+  alter table public.gateway_minutes drop constraint erp_test_fail;
+
   -- 손님 행동 기록 (anon)
   perform pg_temp.as_anon();
   perform public.track_event('dev-test-0001', 'view_product', 'ZT-TEST');

@@ -7,7 +7,7 @@ declare
   n int;
   tables text[] := array[
     'staff_members', 'audit_log', 'skus', 'sku_costs', 'stock', 'inventory_movements',
-    'tag_minutes', 'gateway_minutes', 'customer_events', 'erp_stock_view'
+    'tag_minutes', 'gateway_minutes', 'customer_events', 'order_notes', 'erp_stock_view'
   ];
   calls text[] := array[
     'select * from public.erp_staff_list()',

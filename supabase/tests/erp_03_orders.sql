@@ -42,8 +42,15 @@ begin
   -- manager: 취소하면 재고가 한 번만 돌아온다
   perform pg_temp.as_user(m);
   r := public.erp_order_action(o1.id, 'cancel', '고객 변심');
-  assert r.status = 'done' and r.outcome = 'cancelled' and r.close_note = '고객 변심' and r.closed_at is not null,
+  assert r.status = 'done' and r.outcome = 'cancelled' and r.closed_at is not null,
     format('cancel: %s', row_to_json(r));
+  -- 취소 사유는 직원만 본다 (orders는 손님에게 공개·방송되므로 거기에 두지 않는다)
+  assert exists (select 1 from public.order_notes where order_id = o1.id and action = 'cancel' and note = '고객 변심' and actor = m),
+    'cancel note kept for staff';
+  perform pg_temp.as_anon();
+  assert not exists (select 1 from public.orders o where to_jsonb(o)::text like '%고객 변심%'), 'cancel note not public';
+  perform pg_temp.expect_error('select count(*) from public.order_notes', 'permission denied');
+  perform pg_temp.as_user(m);
   perform pg_temp.expect_error(format('select public.erp_order_action(%L, %L)', o1.id, 'cancel'), 'invalid_input');
   perform pg_temp.expect_error(format('select public.erp_order_action(%L, %L)', o1.id, 'refund'), 'invalid_input');
   perform pg_temp.expect_error(format('select public.erp_order_action(%L, %L)', f.id, 'refund'), 'invalid_input');
@@ -120,17 +127,30 @@ begin
   assert not exists (select 1 from public.inventory_movements where order_id = u.id), 'no movement without sku';
   assert not exists (select 1 from public.audit_log where action = 'error' and at >= now()), 'no internal error rows';
 
+  -- 재고 차감이 실패해도 주문은 성공하고, 오류만 기록된다 (일부러 실패를 주입)
+  perform pg_temp.as_admin();
+  update public.products set status = 'active' where id = 'ZT-TEST';
+  alter table public.inventory_movements add constraint erp_test_fail check (delta > 1000) not valid;
+  perform pg_temp.as_anon();
+  u := public.place_order('dev-test-0003', 'ZT-TEST', 'M', 'purchase', '카드');
+  perform pg_temp.as_admin();
+  assert u.id is not null and not exists (select 1 from public.inventory_movements where order_id = u.id), 'order kept, no movement';
+  assert exists (select 1 from public.audit_log where action = 'error' and entity = 'order_after_insert' and at >= now()),
+    'injected failure logged';
+  alter table public.inventory_movements drop constraint erp_test_fail;
+  delete from public.audit_log where action = 'error' and at >= now();
+
   -- 매출: 취소 제외, 환불은 환불일에 차감 (테스트 전 기준값과의 차이로 확인)
-  -- 테스트 구매: o1 취소(제외), o2 환불, o3 완료, 품절 무시 구매 1건 = ZT-TEST 3건 45,000 + ZU-TEST 1,000
+  -- 테스트 구매: o1 취소(제외), o2 환불, o3 완료, 품절 무시 구매 1건, 실패 주입 구매 1건 = ZT-TEST 4건 60,000 + ZU-TEST 1,000
   perform pg_temp.as_user(m);
   select * into s1 from public.erp_sales_daily(v_today, v_today);
   assert s1.day = v_today, 'one row for today';
-  assert s1.orders - s0.orders = 4 and s1.units - s0.units = 4, format('orders/units delta %s/%s', s1.orders - s0.orders, s1.units - s0.units);
-  assert s1.revenue - s0.revenue = 46000, format('revenue delta %s', s1.revenue - s0.revenue);
+  assert s1.orders - s0.orders = 5 and s1.units - s0.units = 5, format('orders/units delta %s/%s', s1.orders - s0.orders, s1.units - s0.units);
+  assert s1.revenue - s0.revenue = 61000, format('revenue delta %s', s1.revenue - s0.revenue);
   assert s1.refunds - s0.refunds = 15000, format('refunds delta %s', s1.refunds - s0.refunds);
-  assert s1.net - s0.net = 31000, format('net delta %s', s1.net - s0.net);
+  assert s1.net - s0.net = 46000, format('net delta %s', s1.net - s0.net);
   select * into bp from public.erp_sales_by_product(v_today, v_today) where product_id = 'ZT-TEST';
-  assert bp.units = 3 and bp.revenue = 45000 and bp.refunds = 15000 and bp.net = 30000, format('by product %s', row_to_json(bp));
+  assert bp.units = 4 and bp.revenue = 60000 and bp.refunds = 15000 and bp.net = 45000, format('by product %s', row_to_json(bp));
   select count(*) into n from public.erp_sales_daily(v_today - 6, v_today);
   assert n = 7, format('one row per day incl. empty days, got %s', n);
   perform pg_temp.expect_error(format('select * from public.erp_sales_daily(%L, %L)', v_today, v_today - 1), 'invalid_input');

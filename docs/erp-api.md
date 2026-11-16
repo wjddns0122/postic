@@ -57,7 +57,8 @@ if (!me) {
 | `skus` | staff | id(`상품ID/사이즈`), product_id, size, barcode, reorder_point, sort, active |
 | `stock` | staff | sku_id, on_hand, updated_at |
 | `inventory_movements` | staff | sku_id, delta, reason(opening·receive·sale·return·adjust·loss), order_id, note, actor, created_at |
-| `orders` | 누구나 | id, product_id, size, sku_id, type(purchase·fitting), status(preparing·ready·done), outcome(completed·cancelled·refunded), pickup_code, amount, pay_method, device_id, handled_by, closed_at, close_note, created_at |
+| `orders` | 누구나 | id, product_id, size, sku_id, type(purchase·fitting), status(preparing·ready·done), outcome(completed·cancelled·refunded), pickup_code, amount, pay_method, device_id, handled_by, closed_at, created_at |
+| `order_notes` | staff | order_id, action(cancel·refund·…), note, actor, created_at — 취소·환불 사유 (orders는 손님에게 공개되므로 사유는 여기에만) |
 | `staff_members` | staff | user_id, display_name, role, active |
 | `settings` | 누구나 | rssi_threshold, online_seconds, block_oversell |
 | `tag_presence` | 누구나 | key, rssi, last_seen, gateway, simulated |
@@ -123,8 +124,10 @@ await supabase.rpc('erp_save_product', { p: { id: p!.id, status: 'active' } }) /
 |---|---|---|---|
 | `ready` | staff | preparing | ready (픽업 대기 / 피팅룸 준비 완료) |
 | `complete` | staff | preparing·ready | done + outcome `completed` |
-| `cancel` | manager | 아직 done이 아님 | done + `cancelled` + 재고 복귀. p_note는 사유 |
+| `cancel` | manager | 아직 done이 아님 | done + `cancelled` + 재고 복귀 |
 | `refund` | manager | 수령 완료된 구매 | outcome `refunded` + 재고 복귀 |
+
+`p_note`(사유)를 주면 직원만 읽는 `order_notes`에 저장된다. 손님 화면으로는 가지 않는다.
 
 ```ts
 await supabase.rpc('erp_order_action', { p_order: order.id, p_action: 'cancel', p_note: '고객 변심' })
