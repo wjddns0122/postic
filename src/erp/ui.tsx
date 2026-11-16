@@ -45,9 +45,9 @@ export function Panel({ title, meta, children, className = '' }: { title?: strin
   )
 }
 
-/** 가로로 넘치면 이 안에서만 스크롤 */
+/** 가로로 넘치면 이 안에서만 스크롤. relative: 화면에 안 보이는 라벨(sr-only, absolute)이 상자 밖으로 빠져 페이지를 넓히지 않게 */
 export function TableBox({ children }: { children: ReactNode }) {
-  return <div className="overflow-x-auto">{children}</div>
+  return <div className="relative overflow-x-auto">{children}</div>
 }
 export const TABLE = 'w-full border-collapse text-[14px]'
 export const TH = 'h-10 border-b border-erp-line px-4 text-left text-xs font-medium whitespace-nowrap text-erp-muted'

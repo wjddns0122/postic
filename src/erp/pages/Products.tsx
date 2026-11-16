@@ -103,8 +103,8 @@ function Detail({ p, skus, canEdit, busy, run }: { p: Product; skus: Sku[]; canE
         </div>
       </div>
 
-      <form onSubmit={save} className="grid grid-cols-2 gap-3 border-b border-erp-line p-5">
-        <h2 className="col-span-2 m-0 text-[17px] font-extrabold">정보</h2>
+      <form onSubmit={save} className="grid grid-cols-1 gap-3 border-b border-erp-line p-5 sm:grid-cols-[repeat(2,minmax(0,1fr))]">
+        <h2 className="m-0 text-[17px] font-extrabold sm:col-span-2">정보</h2>
         {(
           [
             ['name', '이름'],
@@ -119,21 +119,21 @@ function Detail({ p, skus, canEdit, busy, run }: { p: Product; skus: Sku[]; canE
             <label htmlFor={`f-${k}`} className="text-xs font-medium text-erp-muted">
               {label}
             </label>
-            <input id={`f-${k}`} type={k === 'price' ? 'number' : 'text'} value={form[k] ?? ''} disabled={!canEdit} onChange={set(k)} className={`${INPUT} ${k === 'price' ? MONO : ''}`} />
+            <input id={`f-${k}`} type={k === 'price' ? 'number' : 'text'} value={form[k] ?? ''} disabled={!canEdit} onChange={set(k)} className={`${INPUT} w-full min-w-0 ${k === 'price' ? MONO : ''}`} />
           </div>
         ))}
         <div className="flex flex-col gap-1">
           <label htmlFor="f-status" className="text-xs font-medium text-erp-muted">
             판매 상태
           </label>
-          <select id="f-status" value={form.status} disabled={!canEdit} onChange={set('status')} className={INPUT}>
+          <select id="f-status" value={form.status} disabled={!canEdit} onChange={set('status')} className={`${INPUT} w-full min-w-0`}>
             <option value="active">판매 중 (손님에게 보임)</option>
             <option value="hidden">숨김</option>
             <option value="archived">보관</option>
           </select>
         </div>
         {canEdit && (
-          <div className="col-span-2 flex justify-end">
+          <div className="flex justify-end sm:col-span-2">
             <button type="submit" disabled={busy === `save:${p.id}`} className={BTN_PRIMARY}>
               {busy === `save:${p.id}` ? '저장 중…' : '정보 저장'}
             </button>
