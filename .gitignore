@@ -19,3 +19,7 @@ dist
 .venv
 __pycache__
 *.pyc
+
+# supabase CLI local link state
+supabase/.temp
+.superpowers
