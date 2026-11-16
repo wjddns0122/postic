@@ -10,7 +10,8 @@ BP106 비콘 → Minew G1 → Supabase(`g1-ingest` 함수) → React 웹(실시�
 > ```
 
 - 손님 화면: `/` (폰)
-- 직원 대시보드: `/admin` (노트북/태블릿) — 태그 N/N 온라인, RSSI 임계값, 시뮬레이터, 주문 상태, G1 원본 데이터
+- 직원 대시보드: `/admin` (노트북/태블릿) — 태그 N/N 온라인, RSSI 임계값, 시뮬레이터, 주문 상태, G1 원본 데이터 (PIN)
+- 직원 ERP: `/erp` — 직원 개인 계정 로그인. 오늘·주문·상품·재고·태그·게이트·분석·직원·설정 ([docs/erp-api.md](docs/erp-api.md)). 개발 서버에서는 `/erp/preview`로 로그인 없이 첫 화면 미리보기
 - Supabase 프로젝트: `postic-prototype` (hnnsiqgiibqgiyskdxyj, 서울)
 
 ## 실행

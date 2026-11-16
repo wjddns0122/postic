@@ -112,6 +112,43 @@ export function rankProducts(
   return list
 }
 
+const RANK: Record<Role, number> = { owner: 3, manager: 2, staff: 1 }
+export const roleAtLeast = (role: Role, min: Role) => RANK[role] >= RANK[min]
+
+type OrderLike = { type?: OrderType; status: OrderStatus; outcome: 'completed' | 'cancelled' | 'refunded' | null }
+
+/** 주문 탭: 진행 중(open) / 완료(done) / 취소·환불(closed) */
+export function orderTab(o: OrderLike): 'open' | 'done' | 'closed' {
+  if (o.outcome === 'cancelled' || o.outcome === 'refunded') return 'closed'
+  return o.status === 'done' ? 'done' : 'open'
+}
+
+/** 취소: manager 이상, 건네기 전(done 아님) */
+export const canCancel = (o: OrderLike, role: Role) => roleAtLeast(role, 'manager') && o.status !== 'done' && o.outcome == null
+
+/** 환불: manager 이상, 수령 완료된 구매 */
+export const canRefund = (o: OrderLike, role: Role) =>
+  roleAtLeast(role, 'manager') && o.type === 'purchase' && o.status === 'done' && (o.outcome ?? 'completed') === 'completed'
+
+export const formatMac = (mac: string | null) => (mac ? mac.match(/.{2}/g)!.join(':') : '—')
+
+export function isOnline(lastSeen: string | null, now: number, onlineSeconds: number) {
+  return lastSeen != null && now - new Date(lastSeen).getTime() <= onlineSeconds * 1000
+}
+
+/** G1 업로드 본문의 gw(MAC) 끝 4자리로 게이트 이름 */
+export function gatewayName(body: string | null): string | null {
+  try {
+    const gw = body ? (JSON.parse(body) as { gw?: string }).gw : undefined
+    return gw ? `G1-${gw.slice(-4).toUpperCase()}` : null
+  } catch {
+    return null
+  }
+}
+
+/** 오늘로 끝나는 n일 범위 */
+export const rangeDays = (n: number, today: string) => ({ from: shiftDay(today, -(n - 1)), to: today })
+
 const REASONS: Record<string, string> = {
   opening: 'ERP 도입 시점 재고',
   receive: '입고',
@@ -130,6 +167,10 @@ const ERRORS: Record<string, string> = {
   invalid_input: '지금 상태에서는 할 수 없는 작업이에요.',
   out_of_stock: '재고가 없어요.',
   rate_limited: '요청이 너무 많아요. 잠시 뒤 다시 시도해 주세요.',
+  user_not_found: '그 이메일로 만든 계정이 없어요. 먼저 Supabase에서 계정을 만들어 주세요.',
+  last_owner: '마지막 owner는 내리거나 끌 수 없어요.',
+  tag_in_use: '다른 상품이 쓰고 있는 태그예요.',
+  invalid_product: '판매 중이 아닌 상품이에요.',
 }
 
 export const errorMessage = (code: string) => ERRORS[code] ?? '처리하지 못했어요. 잠시 뒤 다시 시도해 주세요.'

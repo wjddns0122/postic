@@ -1,14 +1,22 @@
 import type { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import type { Me } from './api'
 
 const ROLE: Record<Me['role'], string> = { owner: 'owner', manager: '매니저', staff: '직원' }
 
-// 아직 화면이 없는 메뉴는 링크 대신 "준비 중"으로 둔다 (눌러도 갈 곳이 없는 링크를 만들지 않음)
-const SOON = ['주문', '상품', '재고', '태그·게이트', '분석', '직원', '설정']
+export const SECTIONS = [
+  { path: '', label: '오늘' },
+  { path: 'orders', label: '주문' },
+  { path: 'products', label: '상품' },
+  { path: 'stock', label: '재고' },
+  { path: 'tags', label: '태그·게이트' },
+  { path: 'analytics', label: '분석' },
+  { path: 'staff', label: '직원' },
+  { path: 'settings', label: '설정' },
+] as const
 
 /** ERP 공통 틀: 왼쪽 메뉴 + 본문. 좁은 화면에서는 메뉴가 위로 올라간다 */
-export function ErpShell({ me, onSignOut, children }: { me: Me; onSignOut: () => void; children: ReactNode }) {
+export function ErpShell({ me, onSignOut, base = '/erp', children }: { me: Me; onSignOut: () => void; base?: string; children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-wrap bg-erp-ground font-sans text-[15px] leading-normal text-ink">
       <nav aria-label="ERP 메뉴" className="flex flex-[1_1_220px] flex-col gap-6 border-r border-erp-line bg-white px-4 py-6">
@@ -18,16 +26,18 @@ export function ErpShell({ me, onSignOut, children }: { me: Me; onSignOut: () =>
             매장 관리 · {me.display_name || me.email} ({ROLE[me.role]})
           </span>
         </div>
-        <ul className="flex flex-col gap-0.5">
-          <li>
-            <Link to="/erp" aria-current="page" className="block bg-erp-ground px-2 py-2.5 font-bold text-ink no-underline">
-              오늘
-            </Link>
-          </li>
-          {SOON.map((label) => (
-            <li key={label} className="flex items-center justify-between px-2 py-2.5 text-erp-muted">
-              {label}
-              <span className="text-xs">준비 중</span>
+        <ul className="m-0 flex list-none flex-wrap gap-0.5 p-0 md:flex-col">
+          {SECTIONS.map((s) => (
+            <li key={s.path}>
+              <NavLink
+                to={s.path ? `${base}/${s.path}` : base}
+                end={!s.path}
+                className={({ isActive }) =>
+                  `block px-2 py-2.5 no-underline ${isActive ? 'bg-erp-ground font-bold text-ink' : 'text-erp-muted hover:text-ink'}`
+                }
+              >
+                {s.label}
+              </NavLink>
             </li>
           ))}
         </ul>

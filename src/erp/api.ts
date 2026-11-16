@@ -42,7 +42,7 @@ export type TodayData = {
 }
 
 /** 서버 오류 코드(예: 'forbidden') → 한국어 문구로 던진다 */
-function check<T>(res: { data: T; error: { message: string } | null }): T {
+export function check<T>(res: { data: T; error: { message: string } | null }): T {
   if (res.error) throw new Error(errorMessage(res.error.message))
   return res.data
 }

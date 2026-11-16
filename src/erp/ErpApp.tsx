@@ -6,6 +6,15 @@ import { loadMe, type Me } from './api'
 import { ErpLogin } from './ErpLogin'
 import { ErpPanel, ErpShell } from './ErpShell'
 import { Today } from './Today'
+import { MeContext } from './ui'
+
+const Orders = lazy(() => import('./pages/Orders'))
+const Products = lazy(() => import('./pages/Products'))
+const Stock = lazy(() => import('./pages/Stock'))
+const Tags = lazy(() => import('./pages/Tags'))
+const Analytics = lazy(() => import('./pages/Analytics'))
+const Staff = lazy(() => import('./pages/Staff'))
+const Settings = lazy(() => import('./pages/Settings'))
 
 // 개발 서버에서만: /erp/preview 로 로그인 없이 시연일(11/13) 데이터로 화면을 본다. 배포 빌드에는 들어가지 않는다
 const Preview = import.meta.env.DEV ? lazy(() => import('./Preview')) : null
@@ -58,9 +67,23 @@ function Gate() {
       </ErpPanel>
     )
   return (
-    <ErpShell me={me} onSignOut={signOut}>
-      <Today me={me} />
-    </ErpShell>
+    <MeContext.Provider value={me}>
+      <ErpShell me={me} onSignOut={signOut}>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route index element={<Today me={me} />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="products" element={<Products />} />
+            <Route path="stock" element={<Stock />} />
+            <Route path="tags" element={<Tags />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="staff" element={<Staff />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="*" element={<Today me={me} />} />
+          </Routes>
+        </Suspense>
+      </ErpShell>
+    </MeContext.Provider>
   )
 }
 
